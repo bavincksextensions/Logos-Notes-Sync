@@ -74,15 +74,6 @@ export interface ProcessedNote {
   offset: number | null;
 }
 
-export interface Preferences {
-  obsidianVaultPath: string;
-  excludedResources: string;
-  includeHighlightColor: boolean;
-  readwiseToken: string;
-  syncToReadwise: boolean;
-  autoSyncEnabled: boolean;
-}
-
 export interface AuthTokens {
   accessToken: string;
   accessTokenSecret: string;

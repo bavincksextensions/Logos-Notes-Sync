@@ -2,7 +2,7 @@ import { List, ActionPanel, Action, showToast, Toast, Icon, Color, getPreference
 import { useState, useEffect } from "react";
 import { fetchAllNotes, isAuthenticated } from "./api";
 import { processNotes, createLogosLink, expandPath } from "./utils";
-import { ProcessedNote, Preferences } from "./types";
+import { ProcessedNote } from "./types";
 
 export default function Command() {
   const [notes, setNotes] = useState<ProcessedNote[]>([]);

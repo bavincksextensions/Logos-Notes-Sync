@@ -2,7 +2,6 @@ import { getPreferenceValues, showHUD, closeMainWindow } from "@raycast/api";
 import { fetchAllNotes, isAuthenticated } from "./api";
 import { processNotes, groupNotesByResource, writeNotesToObsidian } from "./utils";
 import { sendToReadwise } from "./readwise";
-import { Preferences } from "./types";
 import { log, logError, clearLog } from "./logger";
 
 export default async function Command() {
