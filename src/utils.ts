@@ -90,10 +90,7 @@ export function sanitizeFilename(name: string): string {
 /**
  * Create a Logos deep link that searches for text within a resource
  */
-export function createLogosLink(
-  resourceId: string,
-  searchText?: string | null
-): string {
+export function createLogosLink(resourceId: string, searchText?: string | null): string {
   if (!resourceId || resourceId === "Unknown") return "";
 
   // If we have search text, create a search link within the resource
@@ -126,11 +123,7 @@ export function createLogosLink(
 /**
  * Generate YAML frontmatter for Obsidian
  */
-export function generateFrontmatter(
-  resourceTitle: string,
-  resourceId: string,
-  noteCount: number
-): string {
+export function generateFrontmatter(resourceTitle: string, resourceId: string, noteCount: number): string {
   const lines = ["---"];
   lines.push(`title: ${resourceTitle}`);
 
@@ -166,7 +159,7 @@ export function writeNotesToObsidian(
   notesByResource: Map<string, ProcessedNote[]>,
   outputDir: string,
   includeColor: boolean,
-  excludedResourceIds: string[]
+  excludedResourceIds: string[],
 ): { filesWritten: number; notesWritten: number } {
   const expandedDir = expandPath(outputDir);
 

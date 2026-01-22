@@ -4,7 +4,7 @@
   "title": "Logos Notes Sync",
   "description": "Sync notes and highlights from Logos Bible Software to Obsidian",
   "icon": "icon.png",
-  "author": "herman-bavinck",
+  "author": "herman_bavinck",
   "categories": ["Productivity", "Applications"],
   "license": "MIT",
   "preferences": [
@@ -101,7 +101,8 @@
     "typescript": "^5.2.2"
   },
   "overrides": {
-    "@types/react": "18.2.27"
+    "@types/react": "18.2.27",
+    "react": "18.2.0"
   },
   "scripts": {
     "build": "ray build -e dist",

@@ -1,74 +1,9 @@
 import { LocalStorage } from "@raycast/api";
-import crypto from "crypto";
 import { LogosNote, NotesApiResponse, AuthTokens } from "./types";
 import { log, logError } from "./logger";
 
-// OAuth 1.0a constants
-const CONSUMER_KEY = "33577173ACF3D3660FD9860865158C2AFBCC2784";
-// Note: Consumer secret would typically be needed for OAuth 1.0a
-// For Logos, we need to determine if they use a public consumer secret or implicit flow
-
 const NOTES_API_BASE = "https://app.logos.com/api/app/notes-api";
-const AUTH_BASE = "https://auth.faithlife.com";
-
 const AUTH_STORAGE_KEY = "faithlife-auth-tokens";
-
-function generateNonce(): string {
-  return crypto.randomBytes(16).toString("hex");
-}
-
-function generateTimestamp(): string {
-  return Math.floor(Date.now() / 1000).toString();
-}
-
-function percentEncode(str: string): string {
-  return encodeURIComponent(str)
-    .replace(/!/g, "%21")
-    .replace(/\*/g, "%2A")
-    .replace(/'/g, "%27")
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29");
-}
-
-function buildOAuthSignature(
-  method: string,
-  url: string,
-  params: Record<string, string>,
-  consumerSecret: string,
-  tokenSecret: string = ""
-): string {
-  // Sort and encode parameters
-  const sortedParams = Object.keys(params)
-    .sort()
-    .map((key) => `${percentEncode(key)}=${percentEncode(params[key])}`)
-    .join("&");
-
-  // Create base string
-  const baseString = [
-    method.toUpperCase(),
-    percentEncode(url.split("?")[0]),
-    percentEncode(sortedParams),
-  ].join("&");
-
-  // Create signing key
-  const signingKey = `${percentEncode(consumerSecret)}&${percentEncode(tokenSecret)}`;
-
-  // Sign with HMAC-SHA1
-  const hmac = crypto.createHmac("sha1", signingKey);
-  hmac.update(baseString);
-  return hmac.digest("base64");
-}
-
-function buildOAuthHeader(params: Record<string, string>): string {
-  return (
-    "OAuth " +
-    Object.keys(params)
-      .filter((key) => key.startsWith("oauth_"))
-      .sort()
-      .map((key) => `${key}="${percentEncode(params[key])}"`)
-      .join(",")
-  );
-}
 
 export async function getStoredTokens(): Promise<AuthTokens | null> {
   const stored = await LocalStorage.getItem<string>(AUTH_STORAGE_KEY);
@@ -100,9 +35,7 @@ export async function isAuthenticated(): Promise<boolean> {
   return tokens !== null;
 }
 
-export async function fetchAllNotes(
-  onProgress?: (fetched: number, total: number) => void
-): Promise<LogosNote[]> {
+export async function fetchAllNotes(onProgress?: (fetched: number, total: number) => void): Promise<LogosNote[]> {
   log("fetchAllNotes: Starting");
 
   const tokens = await getStoredTokens();
@@ -123,7 +56,9 @@ export async function fetchAllNotes(
 
     try {
       const response = await fetchNotesPage(tokens, nextKey);
-      log(`fetchAllNotes: Page ${pageNum} returned ${response.notes.length} notes, total: ${response.noteTotal}, moreNotes: ${response.moreNotes}`);
+      log(
+        `fetchAllNotes: Page ${pageNum} returned ${response.notes.length} notes, total: ${response.noteTotal}, moreNotes: ${response.moreNotes}`,
+      );
 
       allNotes.push(...response.notes);
       nextKey = response.moreNotes ? response.nextNoteKey : null;
@@ -142,10 +77,7 @@ export async function fetchAllNotes(
   return allNotes;
 }
 
-async function fetchNotesPage(
-  tokens: AuthTokens,
-  startKey: string | null = null
-): Promise<NotesApiResponse> {
+async function fetchNotesPage(tokens: AuthTokens, startKey: string | null = null): Promise<NotesApiResponse> {
   const url = `${NOTES_API_BASE}/notes/find`;
 
   // The start parameter must be an object with a 'noteKey' field, or null for the first page
@@ -230,46 +162,4 @@ async function fetchNotesPage(
   });
 
   return jsonData as NotesApiResponse;
-}
-
-// OAuth 1.0a login flow
-export async function initiateOAuthLogin(): Promise<string> {
-  // Step 1: Get request token
-  const requestTokenUrl = `${AUTH_BASE}/v1/oauth/request_token`;
-
-  const oauthParams: Record<string, string> = {
-    oauth_consumer_key: CONSUMER_KEY,
-    oauth_nonce: generateNonce(),
-    oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: generateTimestamp(),
-    oauth_callback: "raycast://extensions/logos-notes-sync/callback",
-    oauth_version: "1.0",
-  };
-
-  // Note: Without the consumer secret, we can't complete OAuth 1.0a
-  // The web app likely uses a server-side component for this
-
-  // Alternative: Direct the user to login via browser and capture session
-  const loginUrl = `https://app.logos.com/auth/signin?utm_source=raycast&returnUrl=/`;
-  return loginUrl;
-}
-
-// For browser-based session capture
-export async function captureSessionFromHAR(harContent: string): Promise<void> {
-  const har = JSON.parse(harContent);
-  const entries = har.log?.entries || [];
-
-  // Look for successful API calls to extract any tokens
-  for (const entry of entries) {
-    const url = entry.request?.url || "";
-    if (url.includes("notes-api") && entry.response?.status === 200) {
-      // Try to find auth info in cookies or headers
-      const cookies = entry.request?.cookies || [];
-      const headers = entry.request?.headers || [];
-
-      // Store any authentication we find
-      // This is a fallback mechanism
-      console.log("Found authenticated API call");
-    }
-  }
 }

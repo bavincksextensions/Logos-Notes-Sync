@@ -19,10 +19,7 @@ const BATCH_SIZE = 100; // Readwise recommends batching
 /**
  * Send highlights to Readwise API
  */
-export async function sendToReadwise(
-  notes: ProcessedNote[],
-  token: string
-): Promise<{ sent: number; errors: number }> {
+export async function sendToReadwise(notes: ProcessedNote[], token: string): Promise<{ sent: number; errors: number }> {
   if (!token) {
     log("Readwise: No token provided, skipping");
     return { sent: 0, errors: 0 };

@@ -1,13 +1,4 @@
-import {
-  List,
-  ActionPanel,
-  Action,
-  showToast,
-  Toast,
-  Icon,
-  Color,
-  getPreferenceValues,
-} from "@raycast/api";
+import { List, ActionPanel, Action, showToast, Toast, Icon, Color, getPreferenceValues } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { fetchAllNotes, isAuthenticated } from "./api";
 import { processNotes, createLogosLink, expandPath } from "./utils";
@@ -93,11 +84,7 @@ export default function Command() {
       onSearchTextChange={setSearchText}
       searchBarPlaceholder="Search notes..."
       searchBarAccessory={
-        <List.Dropdown
-          tooltip="Filter by Resource"
-          value={selectedResource}
-          onChange={setSelectedResource}
-        >
+        <List.Dropdown tooltip="Filter by Resource" value={selectedResource} onChange={setSelectedResource}>
           <List.Dropdown.Item title="All Resources" value="all" />
           <List.Dropdown.Section title="Resources">
             {resources.map((resource) => (
@@ -122,11 +109,7 @@ export default function Command() {
             accessories={[{ text: note.resourceTitle.slice(0, 30) }]}
             actions={
               <ActionPanel>
-                <Action.OpenInBrowser
-                  title="Open in Logos"
-                  url={createLogosLink(note.resourceId)}
-                  icon={Icon.Book}
-                />
+                <Action.OpenInBrowser title="Open in Logos" url={createLogosLink(note.resourceId)} icon={Icon.Book} />
                 <Action.CopyToClipboard title="Copy Note Text" content={note.text} />
                 <Action.CopyToClipboard
                   title="Copy with Reference"
@@ -136,7 +119,7 @@ export default function Command() {
                   <Action.Open
                     title="Open in Obsidian"
                     target={`obsidian://open?vault=${encodeURIComponent(
-                      expandPath(preferences.obsidianVaultPath).split("/").pop() || ""
+                      expandPath(preferences.obsidianVaultPath).split("/").pop() || "",
                     )}&file=${encodeURIComponent(note.resourceTitle)}`}
                     icon={Icon.Document}
                   />

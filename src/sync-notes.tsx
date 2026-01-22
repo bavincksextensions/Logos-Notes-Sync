@@ -1,9 +1,9 @@
-import { showToast, Toast, getPreferenceValues, showHUD, open, closeMainWindow } from "@raycast/api";
+import { getPreferenceValues, showHUD, closeMainWindow } from "@raycast/api";
 import { fetchAllNotes, isAuthenticated } from "./api";
 import { processNotes, groupNotesByResource, writeNotesToObsidian } from "./utils";
 import { sendToReadwise } from "./readwise";
 import { Preferences } from "./types";
-import { log, logError, clearLog, getLogPath } from "./logger";
+import { log, logError, clearLog } from "./logger";
 
 export default async function Command() {
   // Close Raycast window immediately
@@ -69,7 +69,7 @@ export default async function Command() {
         notesByResource,
         preferences.obsidianVaultPath,
         preferences.includeHighlightColor ?? true,
-        excludedResources
+        excludedResources,
       );
       filesWritten = result.filesWritten;
       notesWritten = result.notesWritten;

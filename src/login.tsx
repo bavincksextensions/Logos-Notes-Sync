@@ -2,7 +2,6 @@ import {
   showToast,
   Toast,
   open,
-  Clipboard,
   showHUD,
   confirmAlert,
   Alert,
@@ -12,7 +11,7 @@ import {
   popToRoot,
 } from "@raycast/api";
 import { useState } from "react";
-import { storeTokens, clearTokens, isAuthenticated } from "./api";
+import { storeTokens, clearTokens } from "./api";
 
 // Since Logos uses OAuth 1.0a with a server-side component we can't replicate,
 // we use a cookie/session-based approach where users extract their session from the browser.

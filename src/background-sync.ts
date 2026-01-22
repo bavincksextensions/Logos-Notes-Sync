@@ -63,7 +63,7 @@ export default async function Command() {
         notesByResource,
         preferences.obsidianVaultPath,
         preferences.includeHighlightColor ?? true,
-        excludedResources
+        excludedResources,
       );
       filesWritten = result.filesWritten;
       notesWritten = result.notesWritten;
